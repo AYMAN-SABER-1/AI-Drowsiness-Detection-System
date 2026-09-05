@@ -32,20 +32,38 @@ Driver drowsiness is one of the leading causes of road accidents worldwide, acco
 * **Real-Time Processing:** 25–30 FPS with under 500ms detection latency.
 * **Offline Operation:** No internet connection or cloud processing required.
 * **Facial Landmark Mesh:** Uses MediaPipe Face Landmarker tracking 478 3D facial points.
-* **Low-Light Capability:** Designed to operate under varying cabin lighting conditions.
+* **Low-Light Capability:** Designed to operate under varying cabin lighting conditions[cite: 1].
 
 ---
 
-## ⚙️ System Architecture
+## ⚙️ Complete System Architecture & Visualizations
+
+### 1. High-Level Pipeline Visualization
 
 ```mermaid
-graph TD
-    A[RPi Camera Module v2] -->|CSI Interface| B[Raspberry Pi 4 - Software Layer]
-    B -->|Python 3.12 / MediaPipe / OpenCV| C{EAR < 0.21 for 15 frames?}
-    C -->|Yes| D[Serial UART / 115200 Baud]
-    D -->|USB Cable| E[ESP32 - Firmware Layer]
-    E -->|GPIO 12| F[LED Warning Indicator]
-    E -->|GPIO 13| G[Active Buzzer Alarm]
+flowchart LR
+    subgraph Hardware_Input["Hardware Layer (HW)"]
+        CAM["RPi Camera Module v2"]
+    end
 
+    subgraph Software_Layer["Software Layer (SW - Raspberry Pi 4)"]
+        F1["Frame Capture (OpenCV)"] --> F2["MediaPipe Landmarker (478 Mesh Points)"]
+        F2 --> F3["Calculate Eye Aspect Ratio (EAR)"]
+        F3 --> F4{"EAR < 0.21 for 15 frames?"}
+        F4 -- Yes --> F5["Format UART Packet ('1', 'B')"]
+        F4 -- No --> F6["Format UART Packet ('0')"]
+    end
 
-Architectural Layers
+    subgraph Communication_Layer["Communication Protocol"]
+        COM["USB UART Serial (115200 Baud)"]
+    end
+
+    subgraph Firmware_Layer["Firmware & Actuator Layer (FW - ESP32)"]
+        MCU["ESP32 Microcontroller"] -->|GPIO 12| LED["Red Warning LED"]
+        MCU -->|GPIO 13| BUZZ["Active Alarm Buzzer"]
+    end
+
+    CAM -->|CSI Interface| F1
+    F5 --> COM
+    F6 --> COM
+    COM --> MCU
