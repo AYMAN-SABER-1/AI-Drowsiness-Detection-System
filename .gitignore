@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Generated media
+*.mp4
+*.avi
+*.mov
+
+# Camera captures
+captures/
+recordings/
+
+# MediaPipe model
+*.task
