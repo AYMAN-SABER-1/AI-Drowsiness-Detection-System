@@ -46,3 +46,6 @@ graph TD
     D -->|USB Cable| E[ESP32 - Firmware Layer]
     E -->|GPIO 12| F[LED Warning Indicator]
     E -->|GPIO 13| G[Active Buzzer Alarm]
+
+
+Architectural Layers
